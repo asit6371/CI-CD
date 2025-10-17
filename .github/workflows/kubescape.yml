@@ -1,0 +1,30 @@
+name: Kubescape Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  nsa-security-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Kubescape
+        run: |
+          curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+
+      - name: Scan Kubernetes YAML files
+        run: |
+          kubescape scan framework nsa --format pretty --output results.txt *.yaml
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: kubescape-nsa-results
+          path: results.txt
+
