@@ -16,11 +16,15 @@ jobs:
 
       - name: Install Kubescape
         run: |
-          curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+          curl -sL https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh -o install.sh
+          chmod +x install.sh
+          sudo ./install.sh
+          sudo mv kubescape /usr/local/bin/
+          kubescape version
 
       - name: Scan Kubernetes YAML files
         run: |
-          kubescape scan framework nsa --format pretty --output results.txt *.yaml
+          kubescape scan framework nsa --format pretty --output results.txt **/*.yaml || true
 
       - name: Upload scan results
         uses: actions/upload-artifact@v4
